@@ -14,10 +14,9 @@ def check_tiktok(message):
     username = text.replace("@", "").strip()
     
     if not username:
-        bot.reply_to(message, "⚠️ تکایە ناوی بەکارهێنەر بنووسە، بۆ نموونە:\n`/check 88hj00`")
+        bot.reply_to(message, "⚠️ تکایە ناوی بەکارهێنەر بنووسە، بۆ نموونە:\n`/check username`")
         return
 
-    # پشکنینی لینکی فەرمی تیکتۆک
     url = f"https://www.tiktok.com/@{username}"
     headers = {"User-Agent": "Mozilla/5.0"}
     
@@ -25,7 +24,7 @@ def check_tiktok(message):
         response = requests.get(url, headers=headers)
         
         if response.status_code == 200:
-            # لێرەدا شێوازی وەڵامدانەوەکە وەک ئەو وێنەیە ڕێک دەخەین
+            # ئەگەر ئەکاونتەکە بوونی هەبێت
             result_text = f"""
 Account - @{username} 🎵
 
@@ -36,7 +35,8 @@ linked 🟠 يحتوي على رابط خارجي (facebook)
             """
             bot.reply_to(message, result_text)
         elif response.status_code == 404:
-            bot.reply_to(message, f"❌ ئەکاونتی @{username} بوونی نییە (بەردەستە / Available)")
+            # ئەگەر ئەکاونتەکە بوونی نەبێت و بەردەست بێت
+            bot.reply_to(message, f"❌ ئەکاونتی @{username} نەدۆزرایەوە (بەردەستە / Available)")
         else:
             bot.reply_to(message, f"⚠️ ناتوانرێت زانیاری بۆ @{username} بهێنرێت لە ئێستادا.")
             
