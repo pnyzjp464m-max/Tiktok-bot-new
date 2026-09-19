@@ -6,7 +6,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    bot.reply_to(message, "سڵاو! فەرموو فەرمانی `/check [username]` بنووسە بۆ پشکنینی تیکتۆک.")
+    bot.reply_to(message, "سڵاو! فەرموو ناوی بەکارهێنەری تیکتۆک بنووسە بۆ پشکنینی دروست:")
 
 @bot.message_handler(func=lambda m: True)
 def check_tiktok(message):
@@ -14,34 +14,24 @@ def check_tiktok(message):
     username = text.replace("@", "").strip()
     
     if not username:
-        bot.reply_to(message, "⚠️ تکایە ناوی بەکارهێنەر بنووسە، بۆ نموونە:\n`/check username`")
+        bot.reply_to(message, "⚠️ تکایە ناوی بەکارهێنەری تیکتۆک بنووسە!")
         return
 
     url = f"https://www.tiktok.com/@{username}"
-    headers = {"User-Agent": "Mozilla/5.0"}
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     
     try:
         response = requests.get(url, headers=headers)
         
+        # پشکنینی ڕاستەقینەی بوونی ئەکاونتەکە
         if response.status_code == 200:
-            # ئەگەر ئەکاونتەکە بوونی هەبێت
-            result_text = f"""
-Account - @{username} 🎵
-
-Passkey No 🟢
-linked 🟠 يحتوي على رابط خارجي (facebook)
-
-✅ - الرقم    ✅ - الإيميل
-            """
-            bot.reply_to(message, result_text)
+            bot.reply_to(message, f"🔍 پشکنین بۆ: @{username}\n\n✅ **ئەکاونتەکە بوونی هەیە (Active)**\n🔗 لینک: {url}")
         elif response.status_code == 404:
-            # ئەگەر ئەکاونتەکە بوونی نەبێت و بەردەست بێت
-            bot.reply_to(message, f"❌ ئەکاونتی @{username} نەدۆزرایەوە (بەردەستە / Available)")
+            bot.reply_to(message, f"🔍 پشکنین بۆ: @{username}\n\n❌ **ئەکاونتی نەدۆزرایەوە (بەردەستە / Available)**")
         else:
-            bot.reply_to(message, f"⚠️ ناتوانرێت زانیاری بۆ @{username} بهێنرێت لە ئێستادا.")
+            bot.reply_to(message, f"⚠️ ناتوانرێت داتای @{username} لە ئێستادا بەدەستبهێنرێت.")
             
     except Exception as e:
         bot.reply_to(message, f"❌ هەڵەیەک ڕووی دا: {str(e)}")
 
 bot.polling()
-
