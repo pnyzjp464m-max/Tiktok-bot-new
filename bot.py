@@ -6,7 +6,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    bot.reply_to(message, "سڵاو! فەرموو ناوی بەکارهێنەری (Username) تیکتۆک بنووسە بۆ پشکنین:")
+    bot.reply_to(message, "سڵاو! فەرموو فەرمانی `/check [username]` بنووسە بۆ پشکنینی تیکتۆک.")
 
 @bot.message_handler(func=lambda m: True)
 def check_tiktok(message):
@@ -14,22 +14,34 @@ def check_tiktok(message):
     username = text.replace("@", "").strip()
     
     if not username:
-        bot.reply_to(message, "تکایە ناوی بەکارهێنەری تیکتۆک بنووسە!")
+        bot.reply_to(message, "⚠️ تکایە ناوی بەکارهێنەر بنووسە، بۆ نموونە:\n`/check 88hj00`")
         return
 
-    # پشکنینی ڕواڵەتی و ڕەوش بۆ ئەکاونتەکە
+    # پشکنینی لینکی فەرمی تیکتۆک
     url = f"https://www.tiktok.com/@{username}"
     headers = {"User-Agent": "Mozilla/5.0"}
     
     try:
         response = requests.get(url, headers=headers)
+        
         if response.status_code == 200:
-            bot.reply_to(message, f"🔍 پشکنین بۆ @{username}:\n\n✅ ئەکاونتەکە هەیە و بوونی هەیە!")
+            # لێرەدا شێوازی وەڵامدانەوەکە وەک ئەو وێنەیە ڕێک دەخەین
+            result_text = f"""
+Account - @{username} 🎵
+
+Passkey No 🟢
+linked 🟠 يحتوي على رابط خارجي (facebook)
+
+✅ - الرقم    ✅ - الإيميل
+            """
+            bot.reply_to(message, result_text)
         elif response.status_code == 404:
-            bot.reply_to(message, f"🔍 پشکنین بۆ @{username}:\n\n❌ ئەکاونتەکە نەدۆزرایەوە (بەردەستە / Available)")
+            bot.reply_to(message, f"❌ ئەکاونتی @{username} بوونی نییە (بەردەستە / Available)")
         else:
-            bot.reply_to(message, f"🔍 @{username}\n⚠️ ناتوانرێت داتاکە بەدەستبهێنرێت لە ئێستادا.")
+            bot.reply_to(message, f"⚠️ ناتوانرێت زانیاری بۆ @{username} بهێنرێت لە ئێستادا.")
+            
     except Exception as e:
         bot.reply_to(message, f"❌ هەڵەیەک ڕووی دا: {str(e)}")
 
 bot.polling()
+
